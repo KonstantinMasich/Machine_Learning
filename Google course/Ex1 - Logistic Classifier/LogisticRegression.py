@@ -28,7 +28,7 @@ class LogisticRegression:
         
     def predict(self, X):
         # 1. Y = W*X + b
-        Y = np.dot(X, self.W)
+        Y = np.dot(self.W*X)
         # 2. S(Y)
         S = self.softmax(Y)
         # 3. One-hot encoding:
@@ -58,14 +58,32 @@ class LogisticRegression:
         
 a = LogisticRegression(verbose=0)
 #a.foo()
-l = [2.0, 1.0, 0.1]
-print("l:",l)
-S = a.softmax(np.array(l))
-print(a.encode_one_hot(S))
+l1 = [2.0, 1.0, 0.1]
+l2 = [[2.0, 1.0, 0.1], [5.2, 1.1, 2.2], [3.4, 1.2, 0.7]]
+l3 = [[2.0, 1.0, 0.1], [5.2, 1.1, 2.2]]
+#print("l:",l1)
+
+ar1 = np.array(l3)
+lz  = [1.0, 1.0, 1.0]
+w1  = np.array(lz)
+print(ar1, w1)
+print(np.dot(ar1, w1))
+#S = a.softmax(np.array(l1))
+#print(S)
+#print(a.encode_one_hot(S))
+z1 = np.ones(shape=(10,10))
+print(z1)
+z2 = np.ones(shape=(10,1))
+print(z2)
+print(np.dot(z1,z2))
+
+import os
+print(os.listdir("/home/kos/Deep Learning"))
+
 # 1. Set weights:
 
 # 2. Train:
 
 # 3. Test:
-X = np.array(l)
-print(a.predict(X))
+#X = np.array(l)
+#print(a.predict(X))
