@@ -65,7 +65,5 @@ clf = LogisticRegression(C=50. / train_samples,
                          penalty='l1', solver='saga', tol=0.1)
 clf.fit(X_train, y_train)
 # See documentation on LogisticRegression
-print(clf.coef_)
-print(clf.coef_.shape)
-print(clf.intercept_) # is bias?
-print(clf.intercept_.shape)# is bias?
+print(clf.coef_, "\n", clf.coef_.shape) # Weights matrix
+print(clf.intercept_, "\n", clf.intercept_.shape) # Bias
