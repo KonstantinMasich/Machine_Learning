@@ -1,103 +1,69 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-from scipy import ndimage
-from sklearn.linear_model import LogisticRegression
-from six.moves import cPickle as pickle
-
-IMAGE_SIZE  = 28     # Pixel width and height.
-PIXEL_DEPTH = 255.0  # Number of levels per pixel.
-
-def load_letter(folder, images_required=-1):
-    """Load the data for a single letter label. Loads images_required images!!"""
-    image_files = os.listdir(folder)
-    # If num of required images is not specified - load them all:
-    if images_required <= 0:
-        images_required = len(image_files)
-    dataset = np.ndarray(shape=(images_required, IMAGE_SIZE, IMAGE_SIZE), dtype=np.float32)
-    print("===============\nNow working in folder:", folder,"\n===============")
-    num_images = 0
-    for image in image_files:
-        image_file = os.path.join(folder, image)
-        try:
-            # 1. Load image data as 2D array (shaped 28x28) of pixel values
-            image_data = (ndimage.imread(image_file).astype(float) - PIXEL_DEPTH / 2) / PIXEL_DEPTH
-            if image_data.shape != (IMAGE_SIZE, IMAGE_SIZE):
-                raise Exception('Unexpected image shape: %s' % str(image_data.shape))
-            # 2. Load data into dataset and move dataset "iterator" a step ahead
-            dataset[num_images, :, :] = image_data
-            num_images += 1
-            # --- To show images:
-            #imgplot = plt.imshow(image_data)
-            #plt.show()
-        except IOError as e:
-            print('Could not read:', image_file, ':', e, '- it\'s ok, skipping.')
-        if num_images >= images_required:
-                break
-    dataset = dataset[0:num_images, :, :]
-    print('Full dataset tensor:', dataset.shape)
-    print('Mean:', np.mean(dataset))
-    print('Standard deviation:', np.std(dataset))
-    print(images_required)
-    return dataset
-
-"""   
-def maybe_pickle(data_folders, required_num_images_per_class, force=False):
-    # To see contents of pickle file, type in terminal:
-    # python3 -mpickle name_of_pickle_file.pickle
-    dataset_names = []
-    for folder in os.listdir(data_folders):
-        full_folder_name = data_folders + "/" + folder
-        set_filename = folder + '.pickle'
-        dataset_names.append(set_filename)
-        if os.path.exists(set_filename) and not force:
-            print('%s already present - Skipping pickling.' % set_filename)
-        else:
-            print('Pickling %s.' % set_filename)
-            dataset = load_letter(folder, required_num_images_per_class)
-            try:
-                with open(set_filename, 'wb') as f:
-                    pickle.dump(dataset, f, pickle.HIGHEST_PROTOCOL)
-            except Exception as e:
-                print('Unable to save data to', set_filename, ':', e)
-        return dataset_names
+"""
+http://scikit-learn.org/stable/auto_examples/linear_model/plot_sparse_logistic_regression_mnist.html
 """
 
-def maybe_pickle2(samples_folder, pickle_folder, required_num_images_per_class, force=False):
-    # To see contents of pickle file, type in terminal:
-    # python3 -mpickle name_of_pickle_file.pickle
-    dataset_names = []
-    for folder in os.listdir(samples_folder):
-        set_filename = pickle_folder + folder + '.pickle'
-        dataset_names.append(set_filename)
-        if os.path.exists(set_filename) and not force:
-            print('%s already present - Skipping pickling.' % set_filename)
-        else:
-            print('Pickling %s' % set_filename)
-            samples = samples_folder + folder + "/"
-            dataset = load_letter(samples, required_num_images_per_class)
-            try:
-                with open(set_filename, 'wb') as f:
-                    pickle.dump(dataset, f, pickle.HIGHEST_PROTOCOL)
-            except Exception as e:
-                print('Unable to save data to', set_filename, ':', e)
-    return dataset_names
-    
-def make_arrays(nb_rows, img_size):
-    if nb_rows:
-        dataset = np.ndarray((nb_rows, img_size, img_size), dtype=np.float32)
-        labels  = np.ndarray(nb_rows, dtype=np.int32)
-    else:
-        dataset, labels = None, None
-    return dataset, labels
+import time
+import matplotlib.pyplot as plt
+import numpy as np
+
+from sklearn.datasets import fetch_mldata
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.utils import check_random_state
+
+# Turn down for faster convergence
+t0 = time.time()
+train_samples = 5000
 
 
-# 1. Pickling parts
-samples_folder = "mnist/testing/"
-pickles_folder = "mnist/pickles/testing/"
-maybe_pickle2(samples_folder, pickles_folder, -1)
-samples_folder = "mnist/training/"
-pickles_folder = "mnist/pickles/training/"
-maybe_pickle2(samples_folder, pickles_folder, -1)
+# 1. Here we fetch the builtin MNIST data.
+mnist = fetch_mldata('MNIST original')
+X = mnist.data.astype('float64')
+y = mnist.target
+# After this step:
+#   X - is 2D ndarray of shape (70000, 784), which means it contains 70.000
+#       pictures, each one is 28x28pxl (=784pxl)
+#   y - is 1D ndarray of shape (70000,) containing labels 0-9, so every row
+#       in y contains info about what digit is depicted in the picture
+#       in corresponding row of X
 
 
+# 2. This is where we shuffle the data: we create a random permutation and
+# shuffle X and y "equally" according to this permutation. Notice that rows
+# of X and y are still corresponding with each other: if X[123] became
+# X[413] after shuffling, y[123] will also become y[413], so each label is
+# still assigned to "its" picture.
+random_state = check_random_state(0)
+permutation = random_state.permutation(X.shape[0])
+X = X[permutation]
+y = y[permutation]
+X = X.reshape((X.shape[0], -1))
+# After reshaping, X and y still have their shapes of (7000, 784) and (7000,)
+
+# 3. Here we split data in train and test sets:
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, train_size=train_samples, test_size=10000)
+# After this step:
+#   X_train - has shape(5000, 784); it has 5.000 train samples
+#   X_test  - has shape(10000,784); it has 10.000 test samples
+#   y_train - has shape(5000,); it has 5000 train labels
+#   y_Test  - has shape(10000,);it has 10.000 test labes
+# So we basically get all the 70.000 samples and split it: 10.000 for test set,
+# and <train_samples> (=5000 by default) for train set.
+
+# 4. We preprocess the data by scaling it (zero mean / unit variance), see
+# documentantion on StandardScaler
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+# X_train is still (5000, 784) and X_test is still (10000, 784)
+
+# 5. This is classifier training itself:
+clf = LogisticRegression(C=50. / train_samples,
+                         multi_class='multinomial',
+                         penalty='l1', solver='saga', tol=0.1)
+clf.fit(X_train, y_train)
+# See documentation on LogisticRegression
+print(clf.coef_, "\n", clf.coef_.shape) # Weights matrix
+print(clf.intercept_, "\n", clf.intercept_.shape) # Bias
