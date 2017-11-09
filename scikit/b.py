@@ -7,10 +7,12 @@ from sklearn.utils import check_random_state
 
 # Let us try to train a regression model on a different, simple set.
 # OR
-#X_train = np.array([[0,0,1],[1,1,1],[1,1,0],[1,0,1],[0,0,0]], dtype='float64')
-#X_test  = np.array([[0,1,0],[1,0,0],[0,1,1]], dtype='float64')
-#y_train = np.array([1,1,1,1,0], dtype='float64')
-#y_test  = np.array([1,1,1], dtype='float64')
+
+X_train = np.array([[0,0,1],[1,1,1],[1,1,0],[1,0,1],[0,0,0]], dtype='float64')
+X_test  = np.array([[0,1,0],[1,0,0],[0,1,1]], dtype='float64')
+y_train = np.array([1,1,1,1,0], dtype='float64')
+y_test  = np.array([1,1,1], dtype='float64')
+
 
 # AND
 """
@@ -21,10 +23,14 @@ y_test  = np.array([0,0,0], dtype='float64')
 """
 
 # XOR
+"""
 X_train = np.array([[0,0,1],[1,1,1],[1,1,0],[1,0,1],[0,0,0]], dtype='float64')
 X_test  = np.array([[0,1,0],[1,0,0],[0,1,1]], dtype='float64')
 y_train = np.array([0,1,0,0,0], dtype='float64')
 y_test  = np.array([0,0,0], dtype='float64')
+"""
+
+
 
 print("Raw arrays:\n",X_train,"\n",y_train,"\n")
 train_samples = len(X_train)
@@ -57,3 +63,5 @@ print(p1)
 for sample in X_test:
     t = sample.T
     print("Prediction for", t, "is:", clf.predict(t.reshape(1, -1)))
+    
+print("All predictions:\n", clf.predict(X_test))
