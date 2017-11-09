@@ -2,6 +2,13 @@
 http://scikit-learn.org/stable/auto_examples/linear_model/plot_sparse_logistic_regression_mnist.html
 """
 
+#===========================================================#
+#===========================================================#
+#= THIS IS AN EXAMPLE OF LOGISTIC REGRESSION, SEE ONE NOTE =#
+#===========================================================#
+#===========================================================#
+
+
 import time
 import matplotlib.pyplot as plt
 import numpy as np

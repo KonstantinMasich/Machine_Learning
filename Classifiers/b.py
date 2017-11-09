@@ -54,6 +54,7 @@ X_test = scaler.transform(X_test)
 """
 
 # 3. Train model:
+# Should not really be multinominal, because what for?
 clf = LogisticRegression(C=50. / train_samples,
                          multi_class='multinomial',
                          penalty='l1', solver='saga', tol=0.1)
