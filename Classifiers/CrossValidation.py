@@ -2,68 +2,65 @@
 Module for cross-validation
 """
 import numpy as np
+
+def KFold(X_data, k=2):
+    """
+    Calculates start and end indices of test set for each fold. To use it, just define a
+    set as a test set when it has indices returned from this function, and make the
+    rest of dataset a train set. Example:
+        indices = KFold(X, 2)
+        for pair in indices:
+            start, end = pair[0], pair[1]
+            X_test, y_test = X[start:end], y[start:end]
+            X_train = np.delete(X, np.s_[start:end], 0)
+            y_train = np.delete(y, np.s_[start:end], 0)
+            # Now fit model with train set.. Calculater error with test set..
+    :param X_data: numpy array of observations
+    :param k: desired amount of samples in test set
+    :return: list of pairs [start_index, end_index] - indices of train set at every step
+    """
+    for i in range(0, len(X_data), k):
+        yield [i, (i + k)]
+        
+
+def leave_one_out(X_data):
+    """
+    Calculates start and end indices of test set for each fold. To use it, just define a
+    set as a test set when it has indices returned from this function, and make the
+    rest of dataset a train set. Example:
+        indices = KFold(X, 2)
+        for pair in indices:
+            start, end = pair[0], pair[1]
+            X_test, y_test = X[start:end], y[start:end]
+            X_train = np.delete(X, np.s_[start:end], 0)
+            y_train = np.delete(y, np.s_[start:end], 0)
+            # Now fit model with train set.. Calculater error with test set..
+    :param X_data: numpy array of observations
+    :return: list of pairs [start_index, end_index] - indices of train set at every step
+    """
+    return KFold(X_data, 1)    
+
+# Test data
 X = np.array([[1, 2], [3, 4], [5, 6], [7, 8]])
-y = np.array([1, 2, 3, 4])
-
-def KFold(X_data, y_data, k=2):
-    # 1. Create split sets:
-    X_set, y_set = __splitter(X_data, y_data, k)
-    # 2. For each subset of split sets:
-    X_res = [], y_res = []
-    for X, y in X_set, y_set:
-        
-        
-    return X_set, y_set
-
-        
-def __splitter(X_data, y_data, k=2):
-    for i in xrange(0, len(X_data), k):
-        #print X_data[i:(i + k)], y_data[i:(i + k)]
-        yield X_data[i:(i + k)], y_data[i:(i + k)]
-
-kf = KFold(X, y, 2)
-for i in kf:
-    print (i)
-
-class Cross_validator:
-    """
-    This class assumes that all the input is correct and X_data and Y_data 
-    are evenly sized arrays.
-    """
-    
-    def __init__(self, X_data, y_data, validation_type='k-fold', k=-1):
-        self.types = ['k-fold', 'one_out', 'random_subsets']
-        self.X_data = X_data
-        self.y_data = y_data
-        self.validation_type = validation_type
-        self.k = k # Fold size
-    
-    def cross_validate(self):
-        # Illegal validation type
-        if self.validation_type not in self.types:
-            print("Error: CROSS_VALIDATOR -> illegal validation type specified!")
-            return None
-        # K-FOLD cross-validation
-        if self.validation_type == self.types[0]:
-            if self.k == -1: # Amount of folds is not specified
-                print("Error: CROSS_VALIDATOR -> amount of folds is not specified!")
-                return None
-            X_set = []
-            y_set = []    
-            for i in xrange(0, len(self.X_data), self.k):
-                X_set.append(self.X_data[i:i + self.k])
-                y_set.append(self.y_data[i:i + self.k])
-            print(X_set, y_set)
-                
-    """
-    def __divide_lists(self, X_data, y_data, k):
-        for i in xrange(0, len(X_data), k):
-            yield X_data[i:i + k], y_data[i:i + k]
-    """    
-"""        
-X = [[1,2,3], [4,5,6], [7,8,9], [10,11,12]]
-y = [['A'],['B'],['C'],['D']]        
-cv = Cross_validator(X,y,k=2)
-cv.cross_validate()
-print ("Hello")
+y = np.array([1, 2, 3, 4])     
+ 
+"""
+#Test for K-FOLD        
+indices = KFold(X, 2)
+for pair in indices:
+    start, end = pair[0], pair[1]
+    X_test, y_test = X[start:end], y[start:end]
+    X_train = np.delete(X, np.s_[start:end], 0)
+    y_train = np.delete(y, np.s_[start:end], 0)
+    print("\n============================\n", X_test, y_test,"\n",X_train, y_train)
+"""
+"""
+#Test for LEAVE ONE OUT
+indices = leave_one_out(X)
+for pair in indices:
+    start, end = pair[0], pair[1]
+    X_test, y_test = X[start:end], y[start:end]
+    X_train = np.delete(X, np.s_[start:end], 0)
+    y_train = np.delete(y, np.s_[start:end], 0)
+    print("\n============================\n", X_test, y_test,"\n",X_train, y_train)
 """
