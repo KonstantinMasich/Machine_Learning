@@ -24,11 +24,9 @@ glob_scores = []
 for k in range(1, 31):
     knn = KNeighborsClassifier(n_neighbors=k)
     glob_scores.append(cross_val_score(knn, X, y, scoring='accuracy', cv=10).mean())
-    print("For",k,"neighbors, average score is:", glob_scores[-1])
+    print("For K =",k,"neighbors, average score is:", glob_scores[-1])
 m = max(glob_scores)
 print("Max score is:", m)
-max_indices = [glob_scores.index(el) for el in glob_scores if el == max(glob_scores)]
-
-
-
-print( [i for i, j in enumerate(glob_scores) if j == m]+1 )
+max_indices = [i for i, j in enumerate(glob_scores) if j == m]
+max_indices = [el+1 for el in max_indices]
+print("K numbers corresponding to max scores are: ", max_indices)
