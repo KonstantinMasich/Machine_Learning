@@ -42,3 +42,31 @@ avg_score = cross_val_score(log_reg, X, y, scoring='accuracy', cv=10).mean()
 print("Average score over X/y:", avg_score)
 print("Now coefficients of LR are:", log_reg.coef_)
 """
+
+print(" ============== Kevin's comparison of models ============== ")
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+k_scores = []
+lr_scores = []
+for i in range(1, 31):
+    print("=================================")
+    print("i = ", i)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state=i)
+    knn = KNeighborsClassifier(n_neighbors=20)
+    knn_score = cross_val_score(knn, X_train, y_train, cv=10, scoring='accuracy').mean()
+    logreg = LogisticRegression()
+    logreg_score = cross_val_score(logreg, X_train, y_train, cv=10, scoring='accuracy').mean()
+    print("KNN score was:", knn_score)
+    print("Logreg score was:", logreg_score)
+    k_scores.append(knn_score)
+    lr_scores.append(logreg_score)
+print("OVERALL:")
+import numpy as np
+print("Mean of KNN was:", np.array(k_scores).mean())
+print("Mean of LR  was:", np.array(lr_scores).mean())
+print("The difference between them was:", np.array(k_scores).mean() - np.array(lr_scores).mean())
+
+
+

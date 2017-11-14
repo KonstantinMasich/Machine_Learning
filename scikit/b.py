@@ -1,67 +1,42 @@
 import numpy as np
 
 from sklearn.linear_model import LogisticRegression
+from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+# 1. We load data:
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# 2. Now we shuffle the data randomly:
 from sklearn.utils import check_random_state
-
-# Let us try to train a regression model on a different, simple set.
-# OR
-
-X_train = np.array([[0,0,1],[1,1,1],[1,1,0],[1,0,1],[0,0,0]], dtype='float64')
-X_test  = np.array([[0,1,0],[1,0,0],[0,1,1]], dtype='float64')
-y_train = np.array([1,1,1,1,0], dtype='float64')
-y_test  = np.array([1,1,1], dtype='float64')
-
-
-# AND
-"""
-X_train = np.array([[0,0,1],[1,1,1],[1,1,0],[1,0,1],[0,0,0]], dtype='float64')
-X_test  = np.array([[0,1,0],[1,0,0],[0,1,1]], dtype='float64')
-y_train = np.array([0,1,0,0,0], dtype='float64')
-y_test  = np.array([0,0,0], dtype='float64')
-"""
-
-# XOR
-"""
-X_train = np.array([[0,0,1],[1,1,1],[1,1,0],[1,0,1],[0,0,0]], dtype='float64')
-X_test  = np.array([[0,1,0],[1,0,0],[0,1,1]], dtype='float64')
-y_train = np.array([0,1,0,0,0], dtype='float64')
-y_test  = np.array([0,0,0], dtype='float64')
-"""
-
-
-
-print("Raw arrays:\n",X_train,"\n",y_train,"\n")
-train_samples = len(X_train)
-# 1. Shuffle data:
 random_state = check_random_state(1)
-permutation = random_state.permutation(X_train.shape[0])
-X_train = X_train[permutation]
-y_train = y_train[permutation]
-X_train = X_train.reshape((X_train.shape[0], -1))
-print("After shuffling:\n",X_train,"\n",y_train,"\n")
+permutation = random_state.permutation(X.shape[0])
+X = X[permutation]
+y = y[permutation]
+X = X.reshape((X.shape[0], -1))
 
-# 2. Scale data: NOT NEEDED HERE? yields wrong results. Maybe because of zeros?
-"""
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-"""
+# 3. And then we use CV on both models to find which one is the best:
+# KNN with 10-fold CV:
+knn = KNeighborsClassifier(n_neighbors=20)
+print(cross_val_score(knn, X, y, cv=10, scoring='accuracy').mean())
+# LR with 10-fold CV:
+logreg = LogisticRegression()
+print(cross_val_score(logreg, X, y, cv=10, scoring='accuracy').mean())
+#Results are: 0.96 for KNN, 0.9533333333 for LR
 
-# 3. Train model:
-clf = LogisticRegression(C=50. / train_samples,
-                         multi_class='multinomial',
-                         penalty='l1', solver='saga', tol=0.1)
-clf.fit(X_train, y_train)
-
-# 4. Manually try some examples:
-t1 = X_test[0].T
-p1 = clf.predict(t1.reshape(1, -1))
-print(p1)
-
-for sample in X_test:
-    t = sample.T
-    print("Prediction for", t, "is:", clf.predict(t.reshape(1, -1)))
-    
-print("All predictions:\n", clf.predict(X_test))
+# 4. Let's do it in a loop!
+for i in range(0, 50):
+    print ("========== random seed =",i," ==========")
+    random_state = check_random_state(i)
+    permutation = random_state.permutation(X.shape[0])
+    X, y = X[permutation], y[permutation]
+    X = X.reshape((X.shape[0], -1))
+    knn = KNeighborsClassifier(n_neighbors=20)
+    logreg = LogisticRegression()
+    print(cross_val_score(knn, X, y, cv=10, scoring='accuracy').mean(), \
+        cross_val_score(logreg, X, y, cv=10, scoring='accuracy').mean())
