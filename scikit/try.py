@@ -1,15 +1,14 @@
 
-#=============================================================================#
-#================ Choosing a model using cross validation ====================#
-#=============================================================================#
+# ============================================================================= #
+# ================ Choosing a model using cross validation ==================== #
+# ============================================================================= #
 
 from sklearn.datasets import load_iris
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn import metrics
-
+import numpy as np
 # 1. Load data
 iris = load_iris()
 X = iris.data
@@ -53,7 +52,7 @@ lr_scores = []
 for i in range(1, 31):
     print("=================================")
     print("i = ", i)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state=i)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=i)
     knn = KNeighborsClassifier(n_neighbors=20)
     knn_score = cross_val_score(knn, X_train, y_train, cv=10, scoring='accuracy').mean()
     logreg = LogisticRegression()
@@ -63,10 +62,7 @@ for i in range(1, 31):
     k_scores.append(knn_score)
     lr_scores.append(logreg_score)
 print("OVERALL:")
-import numpy as np
+
 print("Mean of KNN was:", np.array(k_scores).mean())
 print("Mean of LR  was:", np.array(lr_scores).mean())
 print("The difference between them was:", np.array(k_scores).mean() - np.array(lr_scores).mean())
-
-
-
