@@ -1,15 +1,17 @@
 import numpy as np
 import operator
 
+
 class KNN:
-
-
     def __init__(self, X, y, n_neighbors=5):
         self.X = X
         self.y = y
         self.K = n_neighbors
-        
-        
+
+    def fit(self, X, y):
+        self.X = X
+        self.y = y
+
     def predict(self, X):
         # 1.Searching for K nearest neihghbors
         distances = []
@@ -17,32 +19,32 @@ class KNN:
             distances.append(np.linalg.norm(observation - X))
         dist_dictionary = dict(enumerate(distances))
         # 2. Sorting distances and getting K nearest neighbors EXCEPT for dist=0.0 of course:
-        dist_tuples = sorted(dist_dictionary.items(), key=operator.itemgetter(1))[1:self.K+1]
+        dist_tuples = sorted(dist_dictionary.items(), key=operator.itemgetter(1))[1:self.K + 1]
         # 3. Finding out the most common class within those K nearest neighbors:
         indices = [x[0] for x in dist_tuples]
         y_s = []
         for index in indices:
             y_s.append(self.y[index])
         return self.__most_common(y_s)
-        
-        
+
     def test(self, X_test, y_test):
         matches = 0
         for x, y in zip(X_test, y_test):
             if self.predict(x) == y:
-                matches +=1
-        return matches/len(y_test)
-    
-    
-    def __most_common(self, l):
+                matches += 1
+        return matches / len(y_test)
+
+    @staticmethod
+    def __most_common(l):
         from collections import Counter
         freq = (el for el in l)
         c = Counter(l)
         try:
-            if (c.most_common(2)[0][1] == c.most_common(2)[1][1]):
+            if c.most_common(2)[0][1] == c.most_common(2)[1][1]:
                 return None
         except IndexError:
             return c.most_common(2)[0][0]
+
 
 """
 TESTING
