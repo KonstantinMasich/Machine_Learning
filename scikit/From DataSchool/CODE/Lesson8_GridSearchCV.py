@@ -29,4 +29,20 @@ grid = GridSearchCV(knn, param_grid, cv=10, scoring='accuracy')
 grid.fit(X, y)
 
 # 5. Viewing the complete results:
-print(grid.cv_results_)
+for key, val in grid.cv_results_.items():
+    print(key, ":\n", val, "\n-----------------------")
+
+# 6. Viewing the best score, parameters and estimator (model):
+print("Best score:", grid.best_score_)
+print("Best params:", grid.best_params_)
+print("Best model:", grid.best_estimator_, "\n-----------------------")
+
+# 7. In case we need to check >1 parameters simultaneously:
+print("Now checking best N_NEIGHBORS and WEIGHTS params:")
+k_range = range(1, 31)
+weight_options = ['uniform', 'distance']
+param_grid = {'n_neighbors': k_range, 'weights': weight_options}
+grid = GridSearchCV(knn, param_grid, cv=10, scoring='accuracy')
+grid.fit(X, y)
+print("Best score:", grid.best_score_)
+print("Best params:", grid.best_params_, "\n-----------------------")
