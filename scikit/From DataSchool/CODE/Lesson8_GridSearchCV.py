@@ -46,3 +46,14 @@ grid = GridSearchCV(knn, param_grid, cv=10, scoring='accuracy')
 grid.fit(X, y)
 print("Best score:", grid.best_score_)
 print("Best params:", grid.best_params_, "\n-----------------------")
+
+# 8. After we pick the best model and hyperparameters,
+# we should train it on the WHOLE available dataset; otherwise
+# we would miss out valuable training data!
+knn = KNeighborsClassifier(n_neighbors=13, weights='uniform')
+knn.fit(X, y)
+
+# 9a. We now can check our classifier on out-of-sample data:
+print("For some unseen input we get:", knn.predict([[3, 5, 4, 2]]))
+# 9b. And we can do the same using GridSearchCV OBJECT:
+print("The same is:", grid.predict([[3, 5, 4, 2]]), "\n-----------------------")
