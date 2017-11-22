@@ -40,14 +40,19 @@ X = X.fillna(0)  # REPLACE ALL NaN with 0 -- needed or not?
 
 #sns.pairplot(train_df, x_vars=['Pclass'], y_vars='Survived', size=7, aspect=0.7, kind='reg')
 #plt.show()
+sns.stripplot(x=X['Sex'], y=y, kind='reg')
+plt.show()
 
 
+
+
+"""
 # 4. Let's try KNN for this problem and see how well does it perform.
 knn = KNeighborsClassifier(n_neighbors=8, weights='distance')
 scores = cross_val_score(knn, X, y, scoring='accuracy', cv=15)
 print("Mean cross-validated score is:", scores.mean())
 
-"""
+
 # 5. Let's use LogisticRegression for the problem:
 log_regression = LogisticRegression()
 scores = cross_val_score(log_regression, X, y, scoring='accuracy', cv=10)
