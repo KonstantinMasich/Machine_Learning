@@ -95,3 +95,5 @@ print(p.score(X_test, y_test))
 sk_p = sklearn.linear_model.Perceptron(max_iter=100)
 sk_p.fit(X_train, y_train)
 print(sk_p.score(X_test, y_test))
+
+# Just a small minor change
