@@ -35,7 +35,7 @@ print("On test set, Logistic Regression mean accuracy:", log_reg.score(X_test, y
 """
 # Does cross_val_score actually influence model that was passed to it?
 # ANSWER: NO
-log_reg = LogisticRegression(multi_class='multinomial', penalty='l1', solver='saga', tol=0.1)
+log_reg = Logistic Regression(multi_class='multinomial', penalty='l1', solver='saga', tol=0.1)
 log_reg.fit(X, y)
 print("Coefficients of LR before cross-validating:", log_reg.coef_)
 avg_score = cross_val_score(log_reg, X, y, scoring='accuracy', cv=10).mean()

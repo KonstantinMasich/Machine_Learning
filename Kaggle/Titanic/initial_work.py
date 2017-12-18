@@ -53,8 +53,8 @@ scores = cross_val_score(knn, X, y, scoring='accuracy', cv=15)
 print("Mean cross-validated score is:", scores.mean())
 
 
-# 5. Let's use LogisticRegression for the problem:
-log_regression = LogisticRegression()
+# 5. Let's use Logistic Regression for the problem:
+log_regression = Logistic Regression()
 scores = cross_val_score(log_regression, X, y, scoring='accuracy', cv=10)
 #print("Cross validated scores are:", scores)
 #print("Mean is:", scores.mean())
